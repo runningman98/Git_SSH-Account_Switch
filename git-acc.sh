@@ -51,11 +51,11 @@ function git-acc(){
 
       [account]               use which accounts on this shell, type the account name that you register.
       -h, --help              print help information.
-      -add, --add_account     build git_account info. & ssh-key.
-          -t, --type          ssh-key types, follow `ssh-keygen` rule, 
-                              types: dsa | ecdsa | ecdsa-sk | ed25519 | ed25519-sk | rsa(default)
-      -rm, --remove_account   remove git_account info. & ssh-key from this device
-      -out, --logout          logout your current ssh-acc.
+      -a, --add               build git_account info. & ssh-key.
+          -t, --type              ssh-key types, follow `ssh-keygen` rule, 
+                                  types: dsa | ecdsa | ecdsa-sk | ed25519(default) | ed25519-sk | rsa
+      -d, --delete            git_account info. & ssh-key from this device
+      -q, --quit              logout your current ssh-acc.
 
 
     EXAMPLES
@@ -74,7 +74,7 @@ function git-acc(){
 
   local ssh_key_locate="$HOME/.ssh/id_"  # "./id_rsa_"
   local gitacc_locate="$HOME/.gitacc" # "./.gitacc"
-  local ssh_keygen_type="rsa"
+  local ssh_keygen_type="ed25519"
   local GIT_ACC_ARG=()
   local GIT_ACC=()    # git account to 
   local user_name
@@ -94,7 +94,7 @@ function git-acc(){
           return 1
         ;;
         # build git_account info. & ssh-key.
-        '-add'|'--add_account')
+        '-a'|'--add')
           GIT_ACC_ARG+='add'
           shift 1
         ;;
@@ -104,11 +104,11 @@ function git-acc(){
           shift 2
         ;;
         # remove git_account info. & ssh-key from this device
-        '-rm'|'--remove_account')
-          GIT_ACC_ARG+='rm'
+        '-d'|'--delete')
+          GIT_ACC_ARG+='delete'
           shift 1
         ;;
-        '-out'|'--logout')
+        '-q'|'--quit')
           ssh-agent -k
           unset SSH_AUTH_SOCK SSH_AGENT_PID
           git config --global --unset user.name
@@ -155,7 +155,7 @@ function git-acc(){
         cat "$ssh_key_locate$user_name.pub"
         Echo_Color g "Paste it to your SSH keys in github or server."
       ;;
-      'rm')
+      'delete')
         printf "Enter the git user name you want to remove: "; read user_name
         
         _acc # read accounts info.
